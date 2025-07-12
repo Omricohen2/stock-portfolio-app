@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Stock, StockCategory } from '../types';
+import { stockService } from '../services/stockService';
 
 interface AddStockFormProps {
   onAddStock: (stock: Omit<Stock, 'id' | 'isActive'>) => void;
@@ -15,6 +16,23 @@ export const AddStockForm: React.FC<AddStockFormProps> = ({ onAddStock }) => {
     purchasePrice: '',
     quantity: '',
   });
+  const [loadingName, setLoadingName] = useState(false);
+
+  // Fetch stock name automatically when ticker changes
+  React.useEffect(() => {
+    const fetchName = async () => {
+      if (formData.ticker.length < 1) {
+        setFormData(prev => ({ ...prev, name: '' }));
+        return;
+      }
+      setLoadingName(true);
+      const name = await stockService.fetchStockName(formData.ticker);
+      setFormData(prev => ({ ...prev, name }));
+      setLoadingName(false);
+    };
+    fetchName();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.ticker]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,9 +98,9 @@ export const AddStockForm: React.FC<AddStockFormProps> = ({ onAddStock }) => {
               type="text"
               name="name"
               value={formData.name}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Apple Inc."
+              readOnly
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
+              placeholder={loadingName ? "טוען שם..." : "Apple Inc."}
             />
           </div>
 

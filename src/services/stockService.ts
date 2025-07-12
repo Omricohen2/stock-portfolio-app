@@ -220,4 +220,16 @@ export const stockService = {
       this.saveSoldStocks(soldStocks);
     }
   },
+
+  // Fetch stock name from Yahoo Finance
+  async fetchStockName(ticker: string): Promise<string> {
+    try {
+      const response = await fetch(`https://corsproxy.io/?https://query1.finance.yahoo.com/v1/finance/search?q=${ticker}`);
+      const data = await response.json();
+      const result = data.quotes?.find((q: any) => q.symbol?.toUpperCase() === ticker.toUpperCase());
+      return result?.shortname || result?.longname || '';
+    } catch {
+      return '';
+    }
+  },
 }; 

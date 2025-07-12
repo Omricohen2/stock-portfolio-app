@@ -47,7 +47,7 @@ export const AddStockForm: React.FC<AddStockFormProps> = ({ onAddStock }) => {
       name: formData.name,
       purchaseDate: formData.purchaseDate,
       purchasePrice: parseFloat(formData.purchasePrice),
-      quantity: parseInt(formData.quantity),
+      quantity: parseFloat(formData.quantity),
     };
 
     onAddStock(newStock);
@@ -142,9 +142,10 @@ export const AddStockForm: React.FC<AddStockFormProps> = ({ onAddStock }) => {
               name="quantity"
               value={formData.quantity}
               onChange={handleChange}
-              min="1"
+              min="0.01"
+              step="0.01"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="10"
+              placeholder="1 או 0.5 או 0.01"
             />
           </div>
         </div>

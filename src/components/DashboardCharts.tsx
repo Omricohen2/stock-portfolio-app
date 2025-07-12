@@ -6,6 +6,7 @@ interface DashboardChartsProps {
   stocks: Stock[];
   soldStocks: SoldStock[];
   summary: PortfolioSummary | null;
+  onAddStock: (stock: Omit<Stock, 'id' | 'isActive' | 'category'>) => void;
 }
 
 interface SectorData {
@@ -24,7 +25,8 @@ interface TrendData {
 export const DashboardCharts: React.FC<DashboardChartsProps> = ({ 
   stocks, 
   soldStocks, 
-  summary 
+  summary, 
+  onAddStock 
 }) => {
   const [showAddStock, setShowAddStock] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -326,7 +328,7 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({
               className="absolute top-2 left-2 text-gray-500 hover:text-red-600 text-2xl font-bold"
               title="סגור"
             >×</button>
-            <AddStockForm onAddStock={() => setShowAddStock(false)} />
+            <AddStockForm onAddStock={async (stock) => { await onAddStock(stock); setShowAddStock(false); }} />
           </div>
         </div>
       )}

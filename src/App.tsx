@@ -172,6 +172,7 @@ function App() {
               stocks={stocks}
               soldStocks={soldStocks}
               summary={summary}
+              onAddStock={handleAddStock}
             />
           )}
 

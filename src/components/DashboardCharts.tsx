@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Stock, SoldStock, PortfolioSummary } from '../types';
+import { AddStockForm } from './AddStockForm';
 
 interface DashboardChartsProps {
   stocks: Stock[];
@@ -25,6 +26,10 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({
   soldStocks, 
   summary 
 }) => {
+  const [showAddStock, setShowAddStock] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   // Calculate sector distribution
   const calculateSectorDistribution = (): SectorData[] => {
     const sectorMap = new Map<string, { count: number; totalValue: number }>();
@@ -282,19 +287,28 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">פעולות מהירות</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+          <button
+            className="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+            onClick={() => setShowAddStock(true)}
+          >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
             הוסף מניה
           </button>
-          <button className="flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+          <button
+            className="flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            onClick={() => setShowAdvanced(true)}
+          >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             ניתוח מתקדם
           </button>
-          <button className="flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+          <button
+            className="flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            onClick={() => setShowReport(true)}
+          >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
             </svg>
@@ -302,6 +316,48 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({
           </button>
         </div>
       </div>
+
+      {/* מודל הוספת מניה */}
+      {showAddStock && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4 relative">
+            <button
+              onClick={() => setShowAddStock(false)}
+              className="absolute top-2 left-2 text-gray-500 hover:text-red-600 text-2xl font-bold"
+              title="סגור"
+            >×</button>
+            <AddStockForm onAddStock={() => setShowAddStock(false)} />
+          </div>
+        </div>
+      )}
+      {/* מודל דוח מפורט */}
+      {showReport && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 relative">
+            <button
+              onClick={() => setShowReport(false)}
+              className="absolute top-2 left-2 text-gray-500 hover:text-red-600 text-2xl font-bold"
+              title="סגור"
+            >×</button>
+            <h3 className="text-xl font-bold mb-4 text-center">דוח מפורט</h3>
+            <p className="text-gray-700">פיצ'ר דוח מפורט יתווסף בקרוב. תוכל לייצא דוחות, לראות פילוחים ונתונים מתקדמים.</p>
+          </div>
+        </div>
+      )}
+      {/* מודל ניתוח מתקדם */}
+      {showAdvanced && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 relative">
+            <button
+              onClick={() => setShowAdvanced(false)}
+              className="absolute top-2 left-2 text-gray-500 hover:text-red-600 text-2xl font-bold"
+              title="סגור"
+            >×</button>
+            <h3 className="text-xl font-bold mb-4 text-center">ניתוח מתקדם</h3>
+            <p className="text-gray-700">פיצ'ר ניתוח מתקדם יתווסף בקרוב. כאן תוכל לראות גרפים, ניתוחים וסטטיסטיקות מתקדמות.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }; 

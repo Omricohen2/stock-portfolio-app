@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Stock, SoldStock, PortfolioSummary } from '../types';
 import { AddStockForm } from './AddStockForm';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 interface DashboardChartsProps {
   stocks: Stock[];
@@ -59,25 +60,6 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({
     })).sort((a, b) => b.percentage - a.percentage);
   };
 
-  // Generate mock trend data (last 6 months)
-  const generateTrendData = (): TrendData[] => {
-    const months = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני'];
-    const baseInvested = summary?.totalInvested || 10000;
-    const baseProfit = summary?.totalProfit || 0;
-    
-    return months.map((month, index) => {
-      const monthProgress = (index + 1) / 6;
-      const invested = baseInvested * (0.3 + monthProgress * 0.7); // Growing investment
-      const profit = baseProfit * monthProgress * (0.8 + Math.random() * 0.4); // Variable profit
-      
-      return {
-        month,
-        profit: Math.round(profit),
-        invested: Math.round(invested)
-      };
-    });
-  };
-
   // Generate recommendations based on portfolio analysis
   const generateRecommendations = (): string[] => {
     const recommendations: string[] = [];
@@ -123,7 +105,16 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({
   };
 
   const sectorData = calculateSectorDistribution();
-  const trendData = generateTrendData();
+  // --- Remove old generateTrendData and trendData usage ---
+
+  // --- New: Portfolio Value Trend Chart (placeholder, shows current value N times) ---
+  const N = 10;
+  const portfolioTrend = Array.from({ length: N }, (_, i) => ({
+    label: `T-${N - i}`,
+    value: summary?.currentValue || 0,
+  }));
+  // --- End new code ---
+
   const recommendations = generateRecommendations();
 
   const getSectorColor = (index: number): string => {
@@ -239,28 +230,17 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({
 
         {/* Money Trend Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">טרנד השקעות ורווחים</h3>
-          <div className="space-y-4">
-            {trendData.map((data, index) => (
-              <div key={data.month} className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-16 text-sm font-medium text-gray-600">{data.month}</div>
-                </div>
-                <div className="flex items-center space-x-4 space-x-reverse">
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">השקעה</p>
-                    <p className="font-medium text-gray-900">{formatCurrency(data.invested)}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">רווח</p>
-                    <p className={`font-medium ${data.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {formatCurrency(data.profit)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">טרנד שווי תיק</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={portfolioTrend} margin={{ top: 20, right: 30, left: 10, bottom: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="label" />
+              <YAxis domain={[0, 'auto']} />
+              <Tooltip formatter={(value) => `$${value}`} />
+              <Line type="monotone" dataKey="value" stroke="#2563eb" dot={false} strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+          {/* בעתיד: ניתן להחליף לנתוני היסטוריה אמיתיים */}
         </div>
       </div>
 

@@ -66,36 +66,17 @@ export const SoldStocksTable: React.FC<SoldStocksTableProps> = ({ soldStocks, ca
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  מניה
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  תאריך קנייה
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  תאריך מכירה
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  מחיר קנייה
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  מחיר מכירה
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  כמות
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  רווח/הפסד
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  אחוז
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  משך החזקה
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  פעולות
-                </th>
+                <th className="px-2 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">מניה</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">תאריך קנייה</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">תאריך מכירה</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">מחיר קנייה</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">מחיר מכירה</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">כמות</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">רווח/הפסד</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">אחוז</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">משך החזקה</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">פעולות</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -135,14 +116,10 @@ export const SoldStocksTable: React.FC<SoldStocksTableProps> = ({ soldStocks, ca
                     {stock.quantity}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className={`text-sm font-medium ${getProfitColor(stock.totalProfit)}`}>
-                      {formatCurrency(stock.totalProfit)}
-                    </div>
+                    <div className={`text-sm font-medium ${getProfitColor(stock.totalProfit)}`}>{formatCurrency(stock.totalProfit)}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className={`text-sm font-medium ${getProfitColor(stock.profitPercentage)}`}>
-                      {formatPercentage(stock.profitPercentage)}
-                    </div>
+                    <div className={`text-sm font-medium ${getProfitColor(stock.profitPercentage)}`}>{formatPercentage(stock.profitPercentage)}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {stock.holdingDays} ימים

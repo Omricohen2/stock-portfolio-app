@@ -101,6 +101,15 @@ export const SoldStocksTable: React.FC<SoldStocksTableProps> = ({ soldStocks, ca
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredStocks.map((stock) => (
                 <tr key={stock.id} className="hover:bg-gray-50">
+                  <td className="px-2 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(stock.id); }}
+                      className="text-gray-400 hover:text-red-600 px-2 focus:outline-none"
+                      title="מחק מניה"
+                    >
+                      ×
+                    </button>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">{stock.ticker}</div>

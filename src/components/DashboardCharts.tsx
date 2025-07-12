@@ -229,18 +229,10 @@ export const DashboardCharts: React.FC<DashboardChartsProps> = ({
         </div>
 
         {/* Money Trend Chart */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">טרנד שווי תיק</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={portfolioTrend} margin={{ top: 20, right: 30, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis domain={[0, 'auto']} />
-              <Tooltip formatter={(value) => `$${value}`} />
-              <Line type="monotone" dataKey="value" stroke="#2563eb" dot={false} strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-          {/* בעתיד: ניתן להחליף לנתוני היסטוריה אמיתיים */}
+        <div className="bg-white rounded-lg shadow-md p-6 flex items-center justify-center min-h-[180px]">
+          <span className="text-gray-500 text-lg text-center">
+            אזור זה מיועד לתוספות נוספות בעתיד (גרפים, ניתוחים ועוד)
+          </span>
         </div>
       </div>
 

@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/stock-portfolio-app/static/css/main.aafd3523.css",
-    "main.js": "/stock-portfolio-app/static/js/main.24d5a44a.js",
+    "main.js": "/stock-portfolio-app/static/js/main.dcba7015.js",
     "index.html": "/stock-portfolio-app/index.html",
     "main.aafd3523.css.map": "/stock-portfolio-app/static/css/main.aafd3523.css.map",
-    "main.24d5a44a.js.map": "/stock-portfolio-app/static/js/main.24d5a44a.js.map"
+    "main.dcba7015.js.map": "/stock-portfolio-app/static/js/main.dcba7015.js.map"
   },
   "entrypoints": [
     "static/css/main.aafd3523.css",
-    "static/js/main.24d5a44a.js"
+    "static/js/main.dcba7015.js"
   ]
 }

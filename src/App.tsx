@@ -24,6 +24,29 @@ function App() {
     loadData();
   }, []);
 
+  // Auto-update missing categories for existing stocks
+  useEffect(() => {
+    const updateMissingCategories = async () => {
+      const currentStocks = stockService.getStocks();
+      let updated = false;
+      const updatedStocks = await Promise.all(currentStocks.map(async (stock) => {
+        if (!stock.category || stock.category === 'לא ידוע') {
+          const category = await stockService.fetchCategory(stock.ticker);
+          if (category && category !== stock.category) {
+            updated = true;
+            return { ...stock, category };
+          }
+        }
+        return stock;
+      }));
+      if (updated) {
+        stockService.saveStocks(updatedStocks);
+        setStocks(updatedStocks);
+      }
+    };
+    updateMissingCategories();
+  }, []);
+
   // Update summary when stocks change
   useEffect(() => {
     const updateSummary = async () => {

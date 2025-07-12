@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/stock-portfolio-app/static/css/main.b1d10e3a.css",
+    "main.js": "/stock-portfolio-app/static/js/main.436234fb.js",
+    "index.html": "/stock-portfolio-app/index.html",
+    "main.b1d10e3a.css.map": "/stock-portfolio-app/static/css/main.b1d10e3a.css.map",
+    "main.436234fb.js.map": "/stock-portfolio-app/static/js/main.436234fb.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b1d10e3a.css",
+    "static/js/main.436234fb.js"
+  ]
+}

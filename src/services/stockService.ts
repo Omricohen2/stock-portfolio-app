@@ -242,33 +242,28 @@ export const stockService = {
     name: string;
   } | null> {
     try {
-      // 1. Fetch quote summary (market cap, sector, name)
-      const summaryUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://query2.finance.yahoo.com/v10/finance/quoteSummary/' + ticker + '?modules=price,assetProfile')}`;
-      const summaryRes = await fetch(summaryUrl);
-      const summaryData = await summaryRes.json();
-      const priceObj = summaryData.quoteSummary?.result?.[0]?.price;
-      const profile = summaryData.quoteSummary?.result?.[0]?.assetProfile;
-      // נסה להביא שווי שוק ממספר שדות
-      let marketCap = priceObj?.marketCap?.raw || priceObj?.regularMarketMarketCap?.raw || priceObj?.marketCap || priceObj?.regularMarketMarketCap || null;
-      if (typeof marketCap === 'object' && marketCap !== null && 'raw' in marketCap) marketCap = marketCap.raw;
-      const price = priceObj?.regularMarketPrice?.raw || null;
-      const name = priceObj?.shortName || priceObj?.longName || ticker;
-      const sector = profile?.sector || 'לא ידוע';
-
-      // 2. Fetch chart for 150-day moving average
-      const chartUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + ticker + '?interval=1d&range=7mo')}`;
-      const chartRes = await fetch(chartUrl);
-      const chartData = await chartRes.json();
-      const result = chartData.chart?.result?.[0];
-      let closes = result?.indicators?.quote?.[0]?.close || [];
-      // סנן ערכים לא תקינים
-      closes = closes.filter((v: number | null | undefined) => typeof v === 'number' && !isNaN(v));
-      const closes150 = closes.slice(-150);
-      const movingAverage150 = closes150.length === 150 ? (closes150.reduce((a: number, b: number) => a + b, 0) / 150) : null;
-
+      const apiKey = 'd1svlchr01qllrcoor8gd1svlchr01qllrcoor90';
+      // 1. Get quote (price)
+      const quoteRes = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${apiKey}`);
+      const quoteData = await quoteRes.json();
+      const price = quoteData.c || null;
+      // 2. Get company profile (market cap, sector, name)
+      const profileRes = await fetch(`https://finnhub.io/api/v1/stock/profile2?symbol=${ticker}&token=${apiKey}`);
+      const profileData = await profileRes.json();
+      const marketCap = profileData.marketCapitalization ? profileData.marketCapitalization * 1_000_000 : null; // Finnhub returns in millions
+      const sector = profileData.finnhubIndustry || 'לא ידוע';
+      const name = profileData.name || ticker;
+      // 3. Get 150-day moving average (SMA)
+      const maRes = await fetch(`https://finnhub.io/api/v1/indicator?symbol=${ticker}&indicator=sma&timeperiod=150&token=${apiKey}`);
+      const maData = await maRes.json();
+      let movingAverage150 = null;
+      if (maData.sma && Array.isArray(maData.sma) && maData.sma.length > 0) {
+        // קח את הערך האחרון
+        movingAverage150 = maData.sma[maData.sma.length - 1];
+      }
       // Debug logs
       if (!price || !marketCap || !movingAverage150) {
-        console.warn(`[Scanner Debug] Missing data for ${ticker}:`, { price, marketCap, movingAverage150, closesLength: closes.length, closes150Length: closes150.length });
+        console.warn(`[Scanner Debug] Missing data for ${ticker}:`, { price, marketCap, movingAverage150 });
       }
       if (marketCap && marketCap < 1e9) {
         console.warn(`[Scanner Debug] Unusually low market cap for ${ticker}:`, marketCap);
@@ -276,7 +271,6 @@ export const stockService = {
       if (movingAverage150 && (movingAverage150 < 1 || movingAverage150 > 10000)) {
         console.warn(`[Scanner Debug] Unusual MA150 for ${ticker}:`, movingAverage150);
       }
-
       if (price && marketCap && movingAverage150) {
         return {
           price,

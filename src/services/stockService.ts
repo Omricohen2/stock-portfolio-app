@@ -243,7 +243,7 @@ export const stockService = {
   } | null> {
     try {
       // 1. Fetch quote summary (market cap, sector, name)
-      const summaryUrl = `https://corsproxy.io/?https://query2.finance.yahoo.com/v10/finance/quoteSummary/${ticker}?modules=price,assetProfile`;
+      const summaryUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://query2.finance.yahoo.com/v10/finance/quoteSummary/' + ticker + '?modules=price,assetProfile')}`;
       const summaryRes = await fetch(summaryUrl);
       const summaryData = await summaryRes.json();
       const priceObj = summaryData.quoteSummary?.result?.[0]?.price;
@@ -256,7 +256,7 @@ export const stockService = {
       const sector = profile?.sector || 'לא ידוע';
 
       // 2. Fetch chart for 150-day moving average
-      const chartUrl = `https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=7mo`;
+      const chartUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + ticker + '?interval=1d&range=7mo')}`;
       const chartRes = await fetch(chartUrl);
       const chartData = await chartRes.json();
       const result = chartData.chart?.result?.[0];

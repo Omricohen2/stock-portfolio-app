@@ -232,4 +232,49 @@ export const stockService = {
       return '';
     }
   },
+
+  // Fetch stock data for scanner (price, market cap, moving average 150, sector, name)
+  async fetchScannerStockData(ticker: string): Promise<{
+    price: number;
+    marketCap: number;
+    movingAverage150: number;
+    sector: string;
+    name: string;
+  } | null> {
+    try {
+      // 1. Fetch quote summary (market cap, sector, name)
+      const summaryUrl = `https://corsproxy.io/?https://query2.finance.yahoo.com/v10/finance/quoteSummary/${ticker}?modules=price,assetProfile`;
+      const summaryRes = await fetch(summaryUrl);
+      const summaryData = await summaryRes.json();
+      const priceObj = summaryData.quoteSummary?.result?.[0]?.price;
+      const profile = summaryData.quoteSummary?.result?.[0]?.assetProfile;
+      const marketCap = priceObj?.marketCap?.raw || null;
+      const price = priceObj?.regularMarketPrice?.raw || null;
+      const name = priceObj?.shortName || priceObj?.longName || ticker;
+      const sector = profile?.sector || 'לא ידוע';
+
+      // 2. Fetch chart for 150-day moving average
+      const chartUrl = `https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=7mo`;
+      const chartRes = await fetch(chartUrl);
+      const chartData = await chartRes.json();
+      const result = chartData.chart?.result?.[0];
+      const closes = result?.indicators?.quote?.[0]?.close || [];
+      // קח את 150 הסגירות האחרונות (אם יש)
+      const closes150 = closes.slice(-150);
+      const movingAverage150 = closes150.length === 150 ? (closes150.reduce((a: number, b: number) => a + b, 0) / 150) : null;
+
+      if (price && marketCap && movingAverage150) {
+        return {
+          price,
+          marketCap,
+          movingAverage150,
+          sector,
+          name,
+        };
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  },
 }; 

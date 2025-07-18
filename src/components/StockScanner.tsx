@@ -164,25 +164,30 @@ export const StockScanner: React.FC = () => {
     const results: ScannedStock[] = [];
     const totalStocks = SP500_STOCKS.length;
     
-    // Simulate scanning through all S&P 500 stocks
     for (let i = 0; i < totalStocks; i++) {
       const stock = SP500_STOCKS[i];
-      const mockData = generateMockStockData(stock);
-      
-      // Filter based on criteria:
-      // 1. Price within 5% of 150-day moving average
-      // 2. Market cap over $1B
-      if (Math.abs(mockData.priceToMA150) <= 5 && mockData.marketCap >= 1000000000) {
-        results.push(mockData);
+      // שליפת נתונים אמיתיים מה-API
+      const realData = await stockService.fetchScannerStockData(stock.symbol);
+      if (realData) {
+        const priceToMA150 = ((realData.price - realData.movingAverage150) / realData.movingAverage150) * 100;
+        const scanned: ScannedStock = {
+          symbol: stock.symbol,
+          name: realData.name,
+          price: realData.price,
+          marketCap: realData.marketCap,
+          movingAverage150: realData.movingAverage150,
+          sector: realData.sector,
+          priceToMA150: Math.round(priceToMA150 * 100) / 100,
+        };
+        // קריטריונים: מחיר בטווח 5% מהממוצע נע 150, שווי שוק מעל מיליארד דולר
+        if (Math.abs(scanned.priceToMA150) <= 5 && scanned.marketCap >= 1000000000) {
+          results.push(scanned);
+        }
       }
-      
       setTotalScanned(i + 1);
       setScanProgress(((i + 1) / totalStocks) * 100);
-      
-      // Small delay to simulate API calls
       await new Promise(resolve => setTimeout(resolve, 10));
     }
-    
     setScannedStocks(results);
     setLastUpdated(new Date());
     setIsLoading(false);

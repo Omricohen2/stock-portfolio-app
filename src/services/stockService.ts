@@ -248,7 +248,9 @@ export const stockService = {
       const summaryData = await summaryRes.json();
       const priceObj = summaryData.quoteSummary?.result?.[0]?.price;
       const profile = summaryData.quoteSummary?.result?.[0]?.assetProfile;
-      const marketCap = priceObj?.marketCap?.raw || null;
+      // נסה להביא שווי שוק ממספר שדות
+      let marketCap = priceObj?.marketCap?.raw || priceObj?.regularMarketMarketCap?.raw || priceObj?.marketCap || priceObj?.regularMarketMarketCap || null;
+      if (typeof marketCap === 'object' && marketCap !== null && 'raw' in marketCap) marketCap = marketCap.raw;
       const price = priceObj?.regularMarketPrice?.raw || null;
       const name = priceObj?.shortName || priceObj?.longName || ticker;
       const sector = profile?.sector || 'לא ידוע';
@@ -258,10 +260,22 @@ export const stockService = {
       const chartRes = await fetch(chartUrl);
       const chartData = await chartRes.json();
       const result = chartData.chart?.result?.[0];
-      const closes = result?.indicators?.quote?.[0]?.close || [];
-      // קח את 150 הסגירות האחרונות (אם יש)
+      let closes = result?.indicators?.quote?.[0]?.close || [];
+      // סנן ערכים לא תקינים
+      closes = closes.filter((v: number | null | undefined) => typeof v === 'number' && !isNaN(v));
       const closes150 = closes.slice(-150);
       const movingAverage150 = closes150.length === 150 ? (closes150.reduce((a: number, b: number) => a + b, 0) / 150) : null;
+
+      // Debug logs
+      if (!price || !marketCap || !movingAverage150) {
+        console.warn(`[Scanner Debug] Missing data for ${ticker}:`, { price, marketCap, movingAverage150, closesLength: closes.length, closes150Length: closes150.length });
+      }
+      if (marketCap && marketCap < 1e9) {
+        console.warn(`[Scanner Debug] Unusually low market cap for ${ticker}:`, marketCap);
+      }
+      if (movingAverage150 && (movingAverage150 < 1 || movingAverage150 > 10000)) {
+        console.warn(`[Scanner Debug] Unusual MA150 for ${ticker}:`, movingAverage150);
+      }
 
       if (price && marketCap && movingAverage150) {
         return {
@@ -274,6 +288,7 @@ export const stockService = {
       }
       return null;
     } catch (e) {
+      console.error(`[Scanner Debug] Error fetching data for ${ticker}:`, e);
       return null;
     }
   },
